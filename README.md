@@ -1,3 +1,4 @@
+#Joao Pedro Machado e Murilo Henrique de Souza Silva
 # 📚 App de Gestão Escolar – Professores
 
 Aplicativo desenvolvido em **React Native** integrado ao **Supabase**, com o objetivo de facilitar o gerenciamento de **turmas** e **atividades** por professores.

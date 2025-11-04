@@ -1,131 +1,144 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import { supabase } from '../supabase';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons'; 
 
-export default function CadastroScreen({ navigation }) {
-  const [nome, setNome] = useState('');
-  const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState('');
+export default function CadastroScreen() {
+const navigation = useNavigation();
+const [nome, setNome] = useState('');
+const [email, setEmail] = useState('');
+const [senha, setSenha] = useState('');
 
-  async function handleCadastro() {
-    if (!nome || !email || !senha) {
-      Alert.alert('Erro', 'Preencha todos os campos.');
-      return;
-    }
-
-    // 1️⃣ Cria o usuário no Supabase Auth
-    const { data: authData, error: signUpError } = await supabase.auth.signUp({
-      email,
-      password: senha,
-    });
-
-    console.log('🔍 authData:', JSON.stringify(authData, null, 2)); // <-- AQUI O LOG
-    console.log('🔍 signUpError:', signUpError); // <-- E AQUI SE TIVER ERRO
-
-    if (signUpError) {
-      Alert.alert('Erro no cadastro', signUpError.message);
-      return;
-    }
-
-    // 2️⃣ Busca o usuário logado depois do signUp
-    const { data: userData, error: userError } = await supabase.auth.getUser();
-
-    console.log('🔍 userData:', JSON.stringify(userData, null, 2)); // <-- E AQUI PRA VER O ID
-
-    if (userError || !userData?.user) {
-      Alert.alert('Erro', 'Não foi possível obter o ID do usuário após cadastro.');
-      return;
-    }
-
-    const user = userData.user;
-
-    // 3️⃣ Insere o professor na tabela 'professores'
-    const { error: insertError } = await supabase
-      .from('professores')
-      .insert([{ id: user.id, nome, email }]);
-
-    if (insertError) {
-      console.log('🔍 insertError:', insertError);
-      Alert.alert('Erro ao salvar dados', insertError.message);
-      return;
-    }
-
-    Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
-    navigation.navigate('Login');
-  }
-
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Cadastrar Professor</Text>
-
-      <TextInput
-        style={styles.input}
-        placeholder="Nome"
-        value={nome}
-        onChangeText={setNome}
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-      />
-
-      <TextInput
-        style={styles.input}
-        placeholder="Senha"
-        secureTextEntry
-        value={senha}
-        onChangeText={setSenha}
-      />
-
-      <TouchableOpacity style={styles.btn} onPress={handleCadastro}>
-        <Text style={styles.btnText}>Cadastrar</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>Já tem conta? Faça login</Text>
-      </TouchableOpacity>
-    </View>
-  );
+async function handleCadastro() {
+if (!nome || !email || !senha) {
+Alert.alert('Erro', 'Preencha todos os campos.');
+return;
 }
 
+const { error } = await supabase.auth.signUp({
+  email,
+  password: senha,
+  options: { data: { nome } },
+});
+
+if (error) {
+  Alert.alert('Erro no cadastro', error.message);
+} else {
+  Alert.alert('Sucesso', 'Cadastro realizado com sucesso!');
+  navigation.navigate('LoginScreen');
+}
+
+
+}
+
+return ( <View style={styles.container}>
+{/* Botão de voltar */}
+<TouchableOpacity style={styles.backBtn} onPress={() => navigation.goBack()}> <Ionicons name="arrow-back" size={40} color="#0D5666" /> </TouchableOpacity>
+
+  <Image source={require('../assets/src/logo_escola1.png')} style={styles.logo} />
+
+  <Text style={styles.title}>Cadastro</Text>
+
+  <TextInput
+    style={styles.input}
+    placeholder="Nome"
+    placeholderTextColor="#082F42"
+    value={nome}
+    onChangeText={setNome}
+  />
+
+  <TextInput
+    style={styles.input}
+    placeholder="Email"
+    placeholderTextColor="#082F42"
+    value={email}
+    onChangeText={setEmail}
+    autoCapitalize="none"
+  />
+
+  <TextInput
+    style={styles.input}
+    placeholder="Senha"
+    placeholderTextColor="#082F42"
+    secureTextEntry
+    value={senha}
+    onChangeText={setSenha}
+  />
+
+  <TouchableOpacity style={styles.btn} onPress={handleCadastro}>
+    <Text style={styles.btnText}>Cadastrar</Text>
+  </TouchableOpacity>
+
+  <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+    <Text style={styles.link}>Já possui uma conta? Faça login</Text>
+  </TouchableOpacity>
+</View>
+
+);
+}
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#f5f5f5',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 30,
-  },
-  input: {
-    backgroundColor: '#fff',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: '#ccc',
-  },
-  btn: {
-    backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 8,
-  },
-  btnText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  link: {
-    marginTop: 15,
-    color: '#007bff',
-    textAlign: 'center',
-  },
+container: {
+flex: 1,
+justifyContent: 'center',
+padding: 25,
+backgroundColor: '#FFFEF8',
+},
+backBtn: {
+position: 'absolute',
+top: 70,
+left: 20,
+zIndex: 10,
+},
+logo: {
+width: 120,
+height: 120,
+resizeMode: 'contain',
+alignSelf: 'center',
+marginBottom: 20,
+borderRadius: 20,
+},
+title: {
+fontSize: 32,
+fontWeight: 'bold',
+textAlign: 'center',
+marginBottom: 40,
+color: '#0D5666',
+textShadowColor: '#082F42',
+textShadowOffset: { width: 1, height: 1 },
+textShadowRadius: 2,
+},
+input: {
+backgroundColor: '#FFFEF8',
+padding: 15,
+borderRadius: 12,
+marginBottom: 20,
+borderWidth: 2,
+borderColor: '#0D5666',
+color: '#082F42',
+fontSize: 16,
+},
+btn: {
+backgroundColor: '#EE9335',
+padding: 15,
+borderRadius: 12,
+marginBottom: 20,
+shadowColor: '#082F42',
+shadowOffset: { width: 0, height: 4 },
+shadowOpacity: 0.3,
+shadowRadius: 4,
+elevation: 5,
+},
+btnText: {
+color: '#FFFEF8',
+textAlign: 'center',
+fontWeight: 'bold',
+fontSize: 18,
+},
+link: {
+color: '#0D5666',
+textAlign: 'center',
+fontSize: 14,
+textDecorationLine: 'underline',
+},
 });

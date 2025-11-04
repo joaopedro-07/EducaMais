@@ -37,12 +37,12 @@ export default function App() {
             <Stack.Screen
               name="Cadastro"
               component={CadastroScreen}
-              options={{ title: 'Cadastro' }}
+              options={{ headerShown: false }}
             />
           </>
         ) : (
           <>
-            <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Turmas' }} />
+            <Stack.Screen name="Home" component={HomeScreen} options={{ headerShown: false }} />
             <Stack.Screen name="CreateTurma" component={CreateTurmaScreen} options={{ title: 'Cadastrar Turma' }} />
             <Stack.Screen name="TurmaAtividades" component={TurmaAtividadesScreen} options={{ title: 'Atividades' }} />
             <Stack.Screen name="CreateAtividade" component={CreateAtividadeScreen} options={{ title: 'Cadastrar Atividade' }} />
